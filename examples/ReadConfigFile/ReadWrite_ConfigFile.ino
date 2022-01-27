@@ -2,7 +2,7 @@
  * SD Card Configuration File Example Sketch
  *
  * @brief     Read and write parameters from a config file
- * @file      sd-config-file.ino
+ * @file      ReadWrite_ConfigFile.ino
  * @author    Simon Bluett
  * @website   https://wired.chillibasket.com/
  *
@@ -46,6 +46,9 @@
 SdConfigFile configFile(BUILTIN_SDCARD);
 
 
+char configFileName[] = "file2.txt";
+
+
 // Define some variables which we will set using the 
 // values from the SD card configuration file
 int intValue = 0;
@@ -74,16 +77,16 @@ void setup() {
 	Serial.println(F("--- Read Method 1 - While Loop ---"));
 
 	// Use the "read" method and supply the directory and file name
-	while (configFile.read("file.txt"))
+	while (configFile.read(configFileName))
 	{
 		// Each parameter can be retreived using the "get" method
-		if (configFile.get("IntValue", intValue)) continue;
-		if (configFile.get("LongValue", longValue)) continue;
-		if (configFile.get("FloatValue", floatValue)) continue;
-		if (configFile.get("BoolValue1", boolValue1)) continue;
-		if (configFile.get("BoolValue2", boolValue2)) continue;
-		if (configFile.get("arduinoString", arduinoStringValue)) continue;
-		if (configFile.get("cStringValue", cStringValue, 20)) continue;
+		configFile.get("IntValue", intValue);
+		configFile.get("LongValue", longValue);
+		configFile.get("FloatValue", floatValue);
+		configFile.get("BoolValue1", boolValue1);
+		configFile.get("BoolValue2", boolValue2);
+		configFile.get("arduinoString", arduinoStringValue);
+		configFile.get("cStringValue", cStringValue, 20);
 	}
 
 
@@ -106,19 +109,24 @@ void setup() {
 	Serial.println(F("--- Write Method 1 - While Loop ---"));
 
 	// Use the "write" method and supply the directory and file name
-	while (configFile.write("file.txt"))
+	while (configFile.write(configFileName))
 	{
 		// Each parameter can be saved using the "set" method
 		// Note that when saving the parameter, the existing 
 		// parameter entry is removed from the file and the new
 		// value is added to the bottom of the file
-		if (configFile.set("IntValue", intValue)) continue;
-		if (configFile.set("LongValue", longValue)) continue;
-		if (configFile.set("FloatValue", floatValue)) continue;
-		if (configFile.set("BoolValue1", boolValue1)) continue;
-		if (configFile.set("BoolValue2", boolValue2)) continue;
-		if (configFile.set("arduinoString", arduinoStringValue)) continue;
-		if (configFile.set("cStringValue", cStringValue)) continue;
+		configFile.set("IntValue", intValue);
+		configFile.set("LongValue", longValue);
+		configFile.set("FloatValue", floatValue);
+		configFile.set("BoolValue1", boolValue1);
+		configFile.set("arduinoString", arduinoStringValue);
+		configFile.set("cStringValue", cStringValue);
+
+		// New values can also be added to the file using the "set" method
+		configFile.set("New Float Value", 12.6745);
+
+		// To remove a parameter from the file, use the "remove" method
+		configFile.remove("BoolValue2");
 	}
 
 
@@ -141,13 +149,13 @@ void setup() {
 	 * a True/False value depending on if the read was successful
 	 */
 	Serial.println(F("--- Read Method 2 - Callback ---"));
-	if (configFile.read("configfile.txt", readConfigFunction))
+	if (configFile.read(configFileName, readConfigFunction))
 	{
 		Serial.println(F("Success: config file parameters read"));
 	}
 	else
 	{
-		Serial.println(F("Error: unable to process config file"));
+		Serial.println(F("Error: unable to read from config file"));
 	}
 	
 
@@ -160,9 +168,24 @@ void setup() {
 	floatValue /= 3.5;
 	boolValue1 = !boolValue1;
 	boolValue2 = !boolValue2;
-	arduinoStringValue += " new";
+	arduinoStringValue += " new2";
 	cStringValue[0] = '#';
 
+
+	/**
+	 * Write method 2 - using a callback function
+	 * The benefit of this method is that the function returns
+	 * a True/False value depending on if the read was successful
+	 */
+	Serial.println(F("--- Write Method 2 - Callback ---"));
+	if (configFile.write(configFileName, writeConfigFunction))
+	{
+		Serial.println(F("Success: config file parameters write"));
+	}
+	else
+	{
+		Serial.println(F("Error: unable to write to config file"));
+	}
 }
 
 
@@ -178,19 +201,36 @@ void loop() {
  * Read Method 2 - Callback function
  * 
  * This callback function is used to update the 
- * variableseach time that the "read" method finds 
- * anotherparameter value in the configuration file
+ * variables each time that the "read" method finds 
+ * another parameter value in the configuration file
  */
 void readConfigFunction() {
-	if (configFile.get("IntValue", intValue)) return;
-	if (configFile.get("LongValue", longValue)) return;
-	if (configFile.get("FloatValue", floatValue)) return;
-	if (configFile.get("BoolValue1", boolValue1)) return;
-	if (configFile.get("BoolValue2", boolValue2)) return;
-	if (configFile.get("arduinoString", arduinoStringValue)) return;
-	if (configFile.get("cStringValue", cStringValue, 20)) return;
+	configFile.get("IntValue", intValue);
+	configFile.get("LongValue", longValue);
+	configFile.get("FloatValue", floatValue);
+	configFile.get("BoolValue1", boolValue1);
+	configFile.get("BoolValue2", boolValue2);
+	configFile.get("arduinoString", arduinoStringValue);
+	configFile.get("cStringValue", cStringValue, 20);
 }
 
+
+/**
+ * Write Method 2 - Callback function
+ * 
+ * This callback function is used to update the 
+ * variables each time that the "write" method finds 
+ * another parameter value in the configuration file
+ */
+void writeConfigFunction() {
+	configFile.set("IntValue", intValue);
+	configFile.set("LongValue", longValue);
+	configFile.set("FloatValue", floatValue);
+	configFile.set("BoolValue1", boolValue1);
+	configFile.set("BoolValue2", boolValue2);
+	configFile.set("arduinoString", arduinoStringValue);
+	configFile.set("cStringValue", cStringValue);
+}
 
 
 /**

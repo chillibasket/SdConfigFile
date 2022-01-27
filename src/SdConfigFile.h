@@ -83,6 +83,7 @@ public:
 	bool get(const char *itemName, String &itemValue);
 
 	// Configuration parameter writing methods
+	bool write(const char* fileName, void (*callbackFunction)());
 	bool write(const char* fileName);
 	bool set(const char *itemName, int itemValue);
 	bool set(const char *itemName, float itemValue);
@@ -90,6 +91,7 @@ public:
 	bool set(const char *itemName, bool itemValue);
 	bool set(const char *itemName, char *itemValue);
 	bool set(const char *itemName, String &itemValue);
+	bool remove(const char *itemName);
 	
 private:
 	// Internal utility methods
@@ -127,6 +129,7 @@ private:
 	bool commentActive;
 	bool writeAppend;
 	bool equalsSplit;
+	bool paramFound;
 
 	// Sd card SPI chip select pin
 	const uint8_t chipSelect;

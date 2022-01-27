@@ -50,6 +50,8 @@ SdConfigFile::SdConfigFile(uint8_t chipSelectPin) : chipSelect(chipSelectPin) {
 	lineOverflow = false;
 	commentActive = false;
 	writeAppend = false;
+	equalsSplit = false;
+	paramFound = false;
 	currentPos = NULL;
 }
 
@@ -180,6 +182,7 @@ bool SdConfigFile::readConfigLine() {
 					continue;
 				}
 
+				paramFound = false;
 				equalsSplit = true;
 				return true;
 			}
@@ -221,7 +224,7 @@ void SdConfigFile::printLineToFile() {
  */
 bool SdConfigFile::read(const char* fileName, void (*callbackFunction)()) {
 
-	if (!openConfigFile(fileName)) return false;
+	if (!openConfigFile(fileName) || !callbackFunction) return false;
 
 	// While we have data left to read in the file
 	while (origFile) {
@@ -308,8 +311,28 @@ bool SdConfigFile::write(const char* fileName) {
 	}
 	
 	tempFile.close();
+	writeAppend = false;
 
 	return false;
+}
+
+
+/**
+ * Write the new configurations to the SD card config file using a callback function
+ * 
+ * @param[in]  fileName  The name and path of the config file to write to
+ * @return     True if data write was successful, false otherwise
+ */
+bool SdConfigFile::write(const char* fileName, void (*callbackFunction)()) {
+	if (!callbackFunction) return false;
+	if (!write(fileName)) return false;
+	if (currentPos) callbackFunction();
+	
+	while (write(fileName)) {
+		if (currentPos) callbackFunction();
+	}
+
+	return true;
 }
 
 
@@ -327,6 +350,9 @@ bool SdConfigFile::write(const char* fileName) {
  */
 bool SdConfigFile::checkItemName(const char *itemName) {
 
+	// If a matching parameter has already been found, no need to check again
+	if (paramFound) return false;
+
 	// Remove spaces from front of character array
 	while (currentPos[0] == ' ') currentPos++;
 	int stringLength = strlen(currentPos);
@@ -337,6 +363,7 @@ bool SdConfigFile::checkItemName(const char *itemName) {
 
 	// Check if both name strings match and that the string isn't empty
 	if (strcmp(itemName, currentPos) == 0 && stringLength != 0) {
+		paramFound = true;
 		currentPos = strtok(NULL, "=");
 		if (currentPos) return true;
 	}
@@ -568,6 +595,20 @@ bool SdConfigFile::set(const char *itemName, String &itemValue) {
 		tempFile.print("=");
 		tempFile.println(itemValue);
 	} else if (checkItemName(itemName)) {
+		currentPos = NULL;
+		return true;
+	}
+	return false;
+}
+
+
+/**
+ * Remove/delete a parameter from the config file
+ * @param[in]  itemName  The configuration item name
+ * @return     True if a match was found, false if current item name did not match
+ */
+bool SdConfigFile::remove(const char *itemName) {
+	if (checkItemName(itemName)) {
 		currentPos = NULL;
 		return true;
 	}
