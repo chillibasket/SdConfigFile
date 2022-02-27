@@ -51,6 +51,14 @@ BoolValue2=0
 boolValue3=false
 
 ```
+
+The supported data types which can be written to and read from the configuration file are:
+* Integer value (int)
+* Long Integer value (long)
+* Floating point value (float)
+* Boolean value (bool)
+* Arduino text string (String)
+* C-style character array (\*char[])
 <br />
 <br />
 
@@ -64,7 +72,7 @@ int inValue = 0;
 long longValue = 0;
 float floatValue = 0;
 bool boolValue1 = false;
-String arduinoString = "";
+String arduinoStringValue = "";
 char cStringValue[20];
 
 while (configFile.read("configFileName.txt"))
@@ -86,7 +94,7 @@ int inValue = 0;
 long longValue = 0;
 float floatValue = 0;
 bool boolValue1 = false;
-String arduinoString = "";
+String arduinoStringValue = "";
 char cStringValue[20];
 
 void setup() { 
@@ -135,7 +143,7 @@ int inValue = 123;
 long longValue = 4321;
 float floatValue = 12.56;
 bool boolValue1 = true;
-String arduinoString = "Test Arduino String";
+String arduinoStringValue = "Test Arduino String";
 char cStringValue[] = "Test cString";
 
 while (configFile.write("configFileName.txt"))
@@ -162,7 +170,7 @@ int inValue = 123;
 long longValue = 4321;
 float floatValue = 12.56;
 bool boolValue1 = true;
-String arduinoString = "Test Arduino String";
+String arduinoStringValue = "Test Arduino String";
 char cStringValue[] = "Test cString";
 
 void setup() { 
