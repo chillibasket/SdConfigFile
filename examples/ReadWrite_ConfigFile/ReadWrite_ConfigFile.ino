@@ -6,7 +6,7 @@
  *
  * SdConfigFile <https://github.com/chillibasket/sd-config-file>
  * created:      25th January 2022
- * last updated: 6th February 2022
+ * last updated: 27th February 2022
  * Copyright (C) 2022 by Simon Bluett
  * 
  * Released in the public domain under the MIT license
@@ -82,7 +82,7 @@ void setup() {
 	// Use the "read" method and supply the directory and file name
 	while (configFile.read(configFileName))
 	{
-		// Each parameter can be retreived using the "get" method
+		// Each parameter can be retrieved using the "get" method
 		configFile.get("IntValue", intValue);
 		configFile.get("LongValue", longValue);
 		configFile.get("FloatValue", floatValue);

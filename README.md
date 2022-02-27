@@ -14,7 +14,7 @@ The library supports the following actions:
 5. Creating a new configuration file
 <br />
 
-This library is still a work in progress. If you have any questions or suggestion, feel free to open a new "Issue".
+If you have any questions or suggestion, feel free to open a new GitHub "Issue". If you come across any issues, make sure to specify the hardware you are using and provide examples of the code where the error occurs.
 <br />
 <br />
 
@@ -29,28 +29,54 @@ This library is still a work in progress. If you have any questions or suggestio
 
 ## Usage
 
-### Reading from a Configuration File
+### 1. Configuration File Format
+Here is an example configuration file:
+```
+// Comments are skipped by the library while reading a file 
+// A comment line is marked by two forward slashes // at the start of a line
+# Alternatively, the hash symbol # can also be used to define a comment
+# When writing to a file, the comments will be retained
+
+# Each parameter is defined by the name, followed by an equals sign and the value
+# No other data (such as a comment) is allowed on the same line
+ParameterName=1234
+LongValue=12678
+FloatValue=0.24689
+arduinoString=Hello, this is a string with spaces
+cStringValue=This is also a string
+
+# Boolean values can be capitalised or lowercase, or can be written using a 0 or 1
+BoolValue1=True
+BoolValue2=0
+boolValue3=false
+
+```
+<br />
+<br />
+
+
+### 2. Reading from a Configuration File
 There are two different methods which can be used to read from a configuration file.
 1. Using a *While Loop*:
 ```cpp
-	// The variables where data will be stored need to be defined first
-	int inValue = 0;
-	long longValue = 0;
-	float floatValue = 0;
-	bool boolValue1 = false;
-	String arduinoString = "";
-	char cStringValue[20];
+// The variables where data will be stored need to be defined first
+int inValue = 0;
+long longValue = 0;
+float floatValue = 0;
+bool boolValue1 = false;
+String arduinoString = "";
+char cStringValue[20];
 
-	while (configFile.read("configFileName.txt"))
-	{
-		// Each parameter can be retrieved using the "get" method
-		configFile.get("IntValue", intValue);
-		configFile.get("LongValue", longValue);
-		configFile.get("FloatValue", floatValue);
-		configFile.get("BoolValue1", boolValue1);
-		configFile.get("arduinoString", arduinoStringValue);
-		configFile.get("cStringValue", cStringValue, 20);
-	}
+while (configFile.read("configFileName.txt"))
+{
+	// Each parameter can be retrieved using the "get" method
+	configFile.get("IntValue", intValue);
+	configFile.get("LongValue", longValue);
+	configFile.get("FloatValue", floatValue);
+	configFile.get("BoolValue1", boolValue1);
+	configFile.get("arduinoString", arduinoStringValue);
+	configFile.get("cStringValue", cStringValue, 20);
+}
 ```
 
 2. Using a *Callback Function*:
@@ -95,8 +121,8 @@ The *Callback Function* method has the benefit that it returns either `True` or 
 <br />
 
 
-### Writing to a Configuration File
-It is also possible to write to an existing configuration file to add, remove or change the parameters stored within that file.
+### 3. Writing to a Configuration File
+It is also possible to write to an existing configuration file to add, remove or change the parameters stored within that configuration file.
 * If the configuration file does not already exist on the SD card, a new file with the specified name will be created. Otherwise, the existing file is deleted and an updated configuration file with the same name is created.
 * When updating a parameter using the `set` method, the old parameter value is removed and the new parameter value is added to the bottom of the file.
 * Parameters which are no longer required can be deleted from the configuration file using the `remove` method.
@@ -180,3 +206,14 @@ The *Callback Function* method has the benefit that it returns either `True` or 
 * Teensy 3.6
 * (More coming soon)
 * Let me know if you have tested it on any other devices
+<br />
+<br />
+
+
+## Change Log
+* **Version 0.1.1** [27th February 2022]
+    1. Added support for file names using the Arduino `String` variable name.
+    2. Added option to create a new file if no configuration file with the specified name exists yet.
+    3. Fixed a bug which occurred when writing to a file using the callback function.
+* **Version 0.1.0** [26th January 2022]
+    1. Initial version of the library

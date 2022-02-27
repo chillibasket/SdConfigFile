@@ -6,8 +6,8 @@
  * @author    Simon Bluett
  * @website   https://wired.chillibasket.com/
  *
- * @version   0.1.0
- * @date      25th January 2022
+ * @version   0.1.1
+ * @date      27th February 2022
  * @copyright Copyright (C) 2022, MIT License
  *
  * @note      This class uses the SdFat library to perform
@@ -143,7 +143,7 @@ private:
 	bool equalsSplit;
 	bool paramFound;
 
-	// Sd card SPI chip select pin
+	// SD card SPI chip select pin
 	const uint8_t chipSelect;
 };
 

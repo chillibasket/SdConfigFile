@@ -6,8 +6,8 @@
  * @author    Simon Bluett
  * @website   https://wired.chillibasket.com/
  *
- * @version   0.1.0
- * @date      25th January 2022
+ * @version   0.1.1
+ * @date      27th February 2022
  * @copyright Copyright (C) 2022, MIT License
  *
  * @note      This class uses the SdFat library to perform
@@ -138,7 +138,7 @@ bool SdConfigFile::openTempFile() {
 
 
 /**
- * Read the configuration file until another configuation parameter is found
+ * Read the configuration file until another configuration parameter is found
  * 
  * @return  True if a configuration parameter is found, false if the end of file is reached
  */
@@ -283,7 +283,7 @@ bool SdConfigFile::write(const char* fileName) {
 
 	if (!writeAppend) {
 
-		// Open up the configuation file
+		// Open up the configuration file
 		if (!origFile) {
 			if (!openConfigFile(fileName)) {
 				// If no original file exists, then write directly to the temporary file
@@ -375,7 +375,7 @@ bool SdConfigFile::checkItemName(const char *itemName) {
 
 
 /**
- * Check for whitespace, tab or line ending characters
+ * Check for white-space, tab or line ending characters
  * @param[in]  currentChar The character to test
  * @return     True if the character matches, false otherwise
  */
@@ -388,7 +388,7 @@ bool SdConfigFile::discardChar(char currentChar) {
 
 ///////////////////////////////////////////////////////////////
 //
-// Overloaded "Get" functions to retreive a variety of variables
+// Overloaded "Get" functions to retrieve a variety of variables
 // types from the configuration file using the same method name
 //
 ///////////////////////////////////////////////////////////////
