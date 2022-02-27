@@ -18,6 +18,8 @@
 
 /**
  * MIT License
+ * 
+ * Copyright (c) 2022 Simon Bluett
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -50,7 +52,7 @@
 // the configuration file can be set here
 #ifndef FLOAT_DECIMAL_LENGTH
 #define FLOAT_DECIMAL_LENGTH  (4)
-#endif /*FLOAT_DECIMAL_LENGTH*/
+#endif /* FLOAT_DECIMAL_LENGTH */
 
 
 // If lines containing parameter values in the
@@ -58,7 +60,7 @@
 // length of the buffer can be changed here
 #ifndef SDCONFIG_BUFFER_LENGTH
 #define SDCONFIG_BUFFER_LENGTH (40)
-#endif /*SDCONFIG_BUFFER_LENGTH*/
+#endif /* SDCONFIG_BUFFER_LENGTH */
 
 
 /**
@@ -80,18 +82,28 @@ public:
 	bool get(const char *itemName, long &itemValue);
 	bool get(const char *itemName, bool &itemValue);
 	bool get(const char *itemName, char *itemValue, int maxLength);
-	bool get(const char *itemName, String &itemValue);
 
 	// Configuration parameter writing methods
 	bool write(const char* fileName, void (*callbackFunction)());
 	bool write(const char* fileName);
 	bool set(const char *itemName, int itemValue);
-	bool set(const char *itemName, float itemValue);
+	bool set(const char *itemName, float itemValue, int precision = FLOAT_DECIMAL_LENGTH);
 	bool set(const char *itemName, long itemValue);
 	bool set(const char *itemName, bool itemValue);
 	bool set(const char *itemName, char *itemValue);
-	bool set(const char *itemName, String &itemValue);
 	bool remove(const char *itemName);
+
+#ifdef ARDUINO
+	// Arduino-specific read methods
+	bool read(String fileName) { return read(fileName.c_str()); }
+	bool read(String fileName, void (*callbackFunction)()) { return read(fileName.c_str(), callbackFunction); }
+	bool get(const char *itemName, String &itemValue);
+
+	// Arduino specific write methods
+	bool write(String fileName, void (*callbackFunction)()) { return write(fileName.c_str(), callbackFunction); }
+	bool write(String fileName) { return write(fileName.c_str()); }
+	bool set(const char *itemName, String &itemValue);
+#endif /* ARDUINO */
 	
 private:
 	// Internal utility methods
@@ -106,11 +118,11 @@ private:
 
 	// Choose the SD file system type depending
 	// on which definitions user has supplied
-#ifdef SD_CONFIG_FILE_USE_EXFAT
+#if defined(SD_CONFIG_FILE_USE_EXFAT)
 	SdExFat sd;
 	ExFile origFile;
 	ExFile tempFile;
-#elif defined(SD_CONFIG_USE_FSFAT)
+#elif defined(SD_CONFIG_FILE_USE_FSFAT)
 	SdFs sd;
 	FsFile origFile;
 	FsFile tempFile;
@@ -136,7 +148,7 @@ private:
 };
 
 
-#endif /*SD_CONFIG_FILE_HPP*/
+#endif /* SD_CONFIG_FILE_HPP */
 
 
 ///////////////////////////////////////////////////////////////

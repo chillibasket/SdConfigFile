@@ -18,6 +18,8 @@
 
 /**
  * MIT License
+ * 
+ * Copyright (c) 2022 Simon Bluett
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -99,6 +101,7 @@ bool SdConfigFile::openConfigFile(const char* fileName) {
  */
 bool SdConfigFile::openTempFile() {
 
+	// Attempt to open temporary file 3 times before throwing an error
 	for (int i = 0; i < 3; i++) {
 
 		// Try connecting to the SD card
@@ -283,9 +286,9 @@ bool SdConfigFile::write(const char* fileName) {
 		// Open up the configuation file
 		if (!origFile) {
 			if (!openConfigFile(fileName)) {
-				Serial.println(F("Unable to open config file"));
-				tempFile.close();
-				return false;
+				// If no original file exists, then write directly to the temporary file
+				writeAppend = true;
+				return true;
 			}
 		}
 
@@ -304,7 +307,7 @@ bool SdConfigFile::write(const char* fileName) {
 	}
 
 	// Delete the original configuration file and rename the temporary file
-	if (sd.remove(fileName)) {
+	if (!sd.exists(fileName) || sd.remove(fileName)) {
 		if (!tempFile.rename(fileName)) {
 			Serial.println(F("Unable to rename temporary file"));
 		}
@@ -326,11 +329,10 @@ bool SdConfigFile::write(const char* fileName) {
 bool SdConfigFile::write(const char* fileName, void (*callbackFunction)()) {
 	if (!callbackFunction) return false;
 	if (!write(fileName)) return false;
-	if (currentPos) callbackFunction();
 	
-	while (write(fileName)) {
-		if (currentPos) callbackFunction();
-	}
+	do {
+		if (currentPos || writeAppend) callbackFunction();
+	} while (write(fileName));
 
 	return true;
 }
@@ -485,7 +487,9 @@ bool SdConfigFile::get(const char *itemName, char *itemValue, int maxLength) {
  * @param[in]  itemName  The configuration item name
  * @param[out] itemValue The Arduino String object where value will be saved
  * @return     True if configuration was set, false if current item name did not match
+ * @note       This method is only available for Arduino
  */
+#ifdef ARDUINO
 bool SdConfigFile::get(const char *itemName, String &itemValue) {
 	if (checkItemName(itemName)) {
 		itemValue = currentPos;
@@ -494,6 +498,7 @@ bool SdConfigFile::get(const char *itemName, String &itemValue) {
 	}
 	return false;
 }
+#endif /* ARDUINO */
 
 
 
@@ -549,13 +554,14 @@ bool SdConfigFile::set(const char *itemName, bool itemValue) {
  * Set a float config value
  * @param[in]  itemName  The configuration item name
  * @param[in]  itemValue The float value to which config parameter will be set
+ * @param[in]  precision Number of digits after decimal point to save (default = 4)
  * @return     True if configuration was set, false if current item name did not match
  */
-bool SdConfigFile::set(const char *itemName, float itemValue) {
+bool SdConfigFile::set(const char *itemName, float itemValue, int precision) {
 	if (writeAppend && tempFile) {
 		tempFile.print(itemName);
 		tempFile.print("=");
-		tempFile.println(itemValue,FLOAT_DECIMAL_LENGTH);
+		tempFile.println(itemValue, precision);
 	} else if (checkItemName(itemName)) {
 		currentPos = NULL;
 		return true;
@@ -588,7 +594,9 @@ bool SdConfigFile::set(const char *itemName, char *itemValue) {
  * @param[in]  itemName  The configuration item name
  * @param[in]  itemValue The character array to which config parameter will be set
  * @return     True if configuration was set, false if current item name did not match
+ * @note       This method is only available for Arduino
  */
+#ifdef ARDUINO
 bool SdConfigFile::set(const char *itemName, String &itemValue) {
 	if (writeAppend && tempFile) {
 		tempFile.print(itemName);
@@ -600,6 +608,7 @@ bool SdConfigFile::set(const char *itemName, String &itemValue) {
 	}
 	return false;
 }
+#endif /* ARDUINO */
 
 
 /**

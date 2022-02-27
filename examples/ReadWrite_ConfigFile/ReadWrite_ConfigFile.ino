@@ -1,20 +1,19 @@
-/* * * * * * * * * * * * * * * * * * * * * * *
- * SD Card Configuration File Example Sketch
+/**
+ * SdConfigFile Library Example Sketch
+ * 
+ * This example sketch shows how to read parameters from and write new
+ * values to an SD Card Configuration File using the SdConfigFile library
  *
- * @brief     Read and write parameters from a config file
- * @file      ReadWrite_ConfigFile.ino
- * @author    Simon Bluett
- * @website   https://wired.chillibasket.com/
+ * SdConfigFile <https://github.com/chillibasket/sd-config-file>
+ * created:      25th January 2022
+ * last updated: 6th February 2022
+ * Copyright (C) 2022 by Simon Bluett
+ * 
+ * Released in the public domain under the MIT license
  *
- * @version   0.1.0
- * @date      25th January 2022
- * @copyright Copyright (C) 2022, MIT License
- *
- * @note      This example sketch uses the following libraries:
- *            [SdConfigFile](https://github.com/chillibasket/)
- *            [SdFat](https://github.com/greiman/SdFat)
- *
- * * * * * * * * * * * * * * * * * * * * * * */
+ * This example sketch requires the SdFat library to be installed:
+ * SdFat <https://github.com/greiman/SdFat>
+ */
 
 
 /**
@@ -24,13 +23,13 @@
  * support for the EXFAT file system takes up more memory.
  *
  * SD_CONFIG_FILE_USE_EXFAT: support only EXFAT SD Cards
- * SD_CONFIG_USE_FSFAT: support both FAT16/32 and EXFAT SD Cards
+ * SD_CONFIG_FILE_USE_FSFAT: support both FAT16/32 and EXFAT SD Cards
  * default: FAT16 and FAT32 support only
  * 
  * Uncomment the line below depending on your requirements:
  */
 //#define SD_CONFIG_FILE_USE_EXFAT
-//#define SD_CONFIG_USE_FSFAT
+//#define SD_CONFIG_FILE_USE_FSFAT
 
 
 /**
@@ -46,7 +45,11 @@
 SdConfigFile configFile(BUILTIN_SDCARD);
 
 
-char configFileName[] = "file2.txt";
+/**
+ * Name of the configuration file to open
+ */
+String configFileName = "test_file.txt";
+char configFileName2[] = "test_file2.txt";
 
 
 // Define some variables which we will set using the 
@@ -178,7 +181,7 @@ void setup() {
 	 * a True/False value depending on if the read was successful
 	 */
 	Serial.println(F("--- Write Method 2 - Callback ---"));
-	if (configFile.write(configFileName, writeConfigFunction))
+	if (configFile.write(configFileName2, writeConfigFunction))
 	{
 		Serial.println(F("Success: config file parameters write"));
 	}
