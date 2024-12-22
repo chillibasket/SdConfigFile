@@ -6,9 +6,9 @@
  * @author    Simon Bluett
  * @website   https://wired.chillibasket.com/
  *
- * @version   0.1.1
- * @date      27th February 2022
- * @copyright Copyright (C) 2022, MIT License
+ * @version   0.1.2
+ * @date      22nd December 2024
+ * @copyright Copyright (C) 2022-2024, MIT License
  *
  * @note      This class uses the SdFat library to perform
  *            all SD card operations; this library needs to 
@@ -19,7 +19,7 @@
 /**
  * MIT License
  * 
- * Copyright (c) 2022 Simon Bluett
+ * Copyright (c) 2022-2024 Simon Bluett
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -68,7 +68,7 @@ bool SdConfigFile::openConfigFile(const char* fileName) {
 
 	// Try connecting to the SD card
 	if (!sd.begin(chipSelect)) {
-		sd.initErrorHalt(&Serial);
+		sd.initErrorPrint(&Serial);
 		return false;
 	}
 
@@ -106,7 +106,7 @@ bool SdConfigFile::openTempFile() {
 
 		// Try connecting to the SD card
 		if (!sd.begin(chipSelect)) {
-			sd.initErrorHalt(&Serial);
+			sd.initErrorPrint(&Serial);
 			continue;
 		}
 
